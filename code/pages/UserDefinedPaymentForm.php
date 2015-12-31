@@ -85,8 +85,9 @@ class UserDefinedPaymentForm_Controller extends UserDefinedForm_Controller
 
         foreach ($options as $option) {
             $dbfield = "PaymentFields_" . $option;
-            if ($this->data()->$dbfield)
+            if ($this->data()->$dbfield) {
                 $fields[] = $option;
+            }
         }
 
         return $fields;
@@ -105,8 +106,12 @@ class UserDefinedPaymentForm_Controller extends UserDefinedForm_Controller
         $fields      = parent::getFormFields();
         $fields->add(CompositeField::create($factory->getFields())->addExtraClass($gateway . "_fields"));
 
-        if ($address1 = $fields->fieldByName('billingAddress1')) $address1->setTitle("Address Line 1");
-        if ($address2 = $fields->fieldByName('billingAddress2')) $address2->setTitle("Address Line 2");
+        if ($address1 = $fields->fieldByName('billingAddress1')) {
+            $address1->setTitle("Address Line 1");
+        }
+        if ($address2 = $fields->fieldByName('billingAddress2')) {
+            $address2->setTitle("Address Line 2");
+        }
 
         return $fields;
     }
@@ -126,9 +131,13 @@ class UserDefinedPaymentForm_Controller extends UserDefinedForm_Controller
         $factory     = new GatewayFieldsFactory($gateway, $fieldgroups);
         $fields      = $factory->getFields();
         foreach ($fields as $field) {
-            if (!$field->hasMethod('getName')) continue;
+            if (!$field->hasMethod('getName')) {
+                continue;
+            }
             $fieldname = $field->getName();
-            if ($fieldname == "billingAddress2") continue;
+            if ($fieldname == "billingAddress2") {
+                continue;
+            }
             $required->addRequiredField($fieldname);
         }
 
@@ -386,11 +395,12 @@ class UserDefinedPaymentForm_Controller extends UserDefinedForm_Controller
      * @param $submittedFields
      * @param $payment
      */
-    function SendEmailsToRecipients($recipients, $attachments, $submittedFields, $payment){
+    public function SendEmailsToRecipients($recipients, $attachments, $submittedFields, $payment)
+    {
         $email            = new UserDefinedPaymentForm_SubmittedPaymentFormEmail($submittedFields);
         $email->PaymentID = $payment->ID;
         $receipt_number   = "";
-        if($purchased_response = PurchasedResponse::get()->filter("PaymentID", $payment->ID)->first()){
+        if ($purchased_response = PurchasedResponse::get()->filter("PaymentID", $payment->ID)->first()) {
             $receipt_number = $purchased_response->Reference;
         }
         $emailData        = array("Sender"=>Member::currentUser(), "Fields"=>$submittedFields, "Payment" => $payment, "ReceiptNumber" => $receipt_number);
@@ -490,15 +500,17 @@ class UserDefinedPaymentForm_SubmittedPaymentFormEmail extends UserDefinedForm_S
 
     public function PaymentAmount()
     {
-        if ($payment = $this->Payment())
+        if ($payment = $this->Payment()) {
             return "$" . substr($payment->getAmount(), 0, -2);
+        }
         return "$0";
     }
 
     public function PaymentStatus()
     {
-        if ($payment = $this->Payment())
+        if ($payment = $this->Payment()) {
             return $payment->Status;
+        }
         return "Error";
     }
 }

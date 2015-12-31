@@ -27,5 +27,4 @@
                 $fields->insertAfter(new CheckboxField('SendVoid', _t('UserDefinedPaymentForm.SendVoid', 'Send email for transactions that are saved as Void')), "SendRefunded");
             }
         }
-
     }
